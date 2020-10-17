@@ -1,2 +1,2 @@
 # nlp-labs-2020
-Tasks for NLP course, AGH
+Implementation for NLP course's tasks, AGH, Kraków (source: https://github.com/apohllo/nlp).
