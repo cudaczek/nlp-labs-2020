@@ -21,7 +21,7 @@ oraz dla LLR:
 
 Dla trigramów przyjęłam, że trigram złożony ze słów a_b_c to para bigramów a_b oraz b_c, następnie korzystałam z tych samych wzorów, ale zamiast unigramów podstawiałam bigramy. 
 
-Wyniki top10 dla LLR:
+### Wyniki top10 dla LLR:
 [('mowa w', 169420.0968855021),
  ('których mowa', 110964.59604967944),
  ('o których', 89441.49602821318),
@@ -32,6 +32,7 @@ Wyniki top10 dla LLR:
  ('i nr', 54795.940221138415),
  ('na podstawie', 51409.2964036467),
  ('z dnia', 49289.194381956244)]
+
 
 [('właściwy do spraw', 44519.42111423481),
  ('ustawie z dnia', 35194.68429852709),
@@ -48,7 +49,7 @@ Wyniki top10 dla LLR:
  W przypadku bigramów znalezione wygrażenia często zawierają spójniki.
  Być może warto byłoby pomijać słowa jedno lub dwuliterowe, bo aktualnie bigramy z wysokim LLR nie ukazały żadnych wielowyrazowych nazw własnych, których można było oczekiwać.
 
-Top10 dla PMI:
+### Top10 dla PMI:
 [('grzegorz schetyna', 19.614472192583165),
  ('młyny kulowe', 19.614472192583165),
  ('najnowszych zdobyczy', 19.614472192583165),
@@ -60,6 +61,7 @@ Top10 dla PMI:
  ('chrześcijan baptystów', 19.351437786749372),
  ('mleczka makowego', 19.351437786749372)]
 
+
 [('akt wykonawczy wydany', 20.27320245706795),
  ('aktywa razem pasywa', 20.27320245706795),
  ('artykułu vii układu', 20.27320245706795),
@@ -70,6 +72,7 @@ Top10 dla PMI:
  ('broni było dopuszczalne', 20.27320245706795),
  ('budżetu sprawozdania wojewody', 20.27320245706795),
  ('byłym i obecnym', 20.27320245706795)]
+
 W tym wypadku zostały znalezione parokrotnie występujące wyrażenia - gdyby nie odfiltrowywać wyrażeń rzadszych niż 5 wystąpień uzyskalibyśmy jeszcze rzadsze wyrażenia (często pojedyncze pomyłki - przykład w kodzie).
 
 
@@ -82,16 +85,16 @@ Co z kolei skutkowałoby znacznym zwiększeniem liczby bigramów, z czego spora 
 W ustawach zdarza się dość często konstrukcja wymieniająca numery punktów, czy paragrafów, które niosą za sobą dużo informacji prawniczej, jednak również raczej nie należą do oczekiwanych wyrażeń.
 Dodatkowo odfiltrowywanie takich tokenów na wstępnym etapie wpłynęłoby na częstotliwość wystąpień niektórych wyrażeń. 
 
-- Which measure (PMI, PMI with filtering, LLR) works better for the bigrams and which for the trigrams?
+### Which measure (PMI, PMI with filtering, LLR) works better for the bigrams and which for the trigrams?
 W bigramach lepiej odfiltrować rzadkie wyrażenia, gdyż są to często po prostu literówki. 
 Obie metody znajdują różne typy wyrażeń - niezależnie od tego, czy to bigramy czy trigramy. 
 Na pewno lepiej odfiltrować najrzadsze wystąpienia.
  
-- What types of expressions are discovered by the methods.
+### What types of expressions are discovered by the methods.
 Generalnie jeśli oczekiwanym jest wykrycie złożonych (i niezbyt częstych) wyrażeń własnych lepiesza wydaje się miara PMI z filtrowaniem niż bez niego.
 Jeśli szukane są wyrażenia charakterystyczne dla danego języka (u nas prawniczy), to lepiej ten styl zaprezentuje LLR - jeśli dodatkowo zrezygnuje się tu ze słów bardzo krótkich w wyniku można uzyskać popularne nazwy własne.
 
-- Can you devise a different type of filtering that would yield better results?
+### Can you devise a different type of filtering that would yield better results?
 Odfiltrowywanie wyrazów bardzo krótkich - opisane już wcześniej. 
 Można byłoby też rezygnować z najpopularniejszych spójników - bo występują bardzo często generalnie w języku polskim - jeśli celem miałoby zapoznanie się z konkretnym korpusem i jego charakterysstyką, to prawdopodobnie spójniki mogłyby być zbędne. 
 
