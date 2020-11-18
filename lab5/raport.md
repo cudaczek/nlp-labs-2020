@@ -3,7 +3,7 @@
 
 Tagowanie przy pomocy udostępnianych narzędzi wykonywane jest w data_tagger.py. 
 
-Analiza otrzymanych danych z użyciem bigramów wykonywana jest w lab5. 
+Analiza otrzymanych danych z użyciem bigramów wykonywana jest w lab5.py. 
 
 ## Wyniki z zadania 9
 
@@ -177,12 +177,14 @@ wyrażenia związane mocno z tekstami o charakterze prawniczym.
 
 
 - Which of the category-pairs indicate valuable multiword expressions? Do they have anything in common?
+
 Najczęściej występujące pary kategorii zawierają dwa rzeczowniki lub rzeczownik z przymiotnikiem.
 Wyniki wskazują na to, że wielowyrazowe wyrażenia zawierają najczęściej rzeczownik (subst),
 czyli opisują jakąś rzecz, obiekt, instytucję.
 
 
 - Which signal: LLR score or syntactic category is more useful for determining genuine multiword expressions?
+
 Jeśli uwzględnione zostanie tylko jeden z tych, wyniki nie będą zbyt dobre:
 sam LLR score (jak to już było pokazane na poprzednich labach) uwypukli znaczenie wyrażeń klasycznych dla profilu tekstu,
 jednak będą to przede wszystkim wyrażenia zawierające przyimki i spójniki (używane sformułowania);
@@ -191,9 +193,9 @@ Połączenie LLR score i kategorii syntaktycznych daje szansę wykrywać wyraże
 (w naszym przypadku prawniczej) - nazw własnych.
 
 
-Can you describe a different use-case where the morphosyntactic category is useful for resolving a real-world problem?
- - tłumaczenia - kategorie morfosntaktyczne mogą pomagać rozróżniać różne znaczenia pojedynczego słowa
- - wyszukiwanie wyrażeń - można wykrywać najistotniejsze słowo, do którego pozostałe się odnoszą
- - transkrypcja tekstów - czasem wymowa zależy od kategorii gramatycznej
- - wykrywanie pojęć dziedzinowych (oczywiście przy użyciu dodatkowych narzędzi)
+- Can you describe a different use-case where the morphosyntactic category is useful for resolving a real-world problem?
+    - tłumaczenia - kategorie morfosntaktyczne mogą pomagać rozróżniać różne znaczenia pojedynczego słowa
+    - wyszukiwanie wyrażeń - można wykrywać najistotniejsze słowo, do którego pozostałe się odnoszą
+    - transkrypcja tekstów - czasem wymowa zależy od kategorii gramatycznej
+    - wykrywanie pojęć dziedzinowych (oczywiście przy użyciu dodatkowych narzędzi)
  
