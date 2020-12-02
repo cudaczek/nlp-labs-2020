@@ -8,7 +8,7 @@ from gensim.models import KeyedVectors
 # Download polish word embeddings for word2vec github/Google drive:
 # https://github.com/sdadas/polish-nlp-resources
 # with 100 dimensionality
-# word2vec_100 = KeyedVectors.load("word2vec/word2vec_100_3_polish.bin")
+word2vec_100 = KeyedVectors.load("word2vec/word2vec_100_3_polish.bin")
 # with 300 dimensionality
 word2vec_300 = KeyedVectors.load("word2vec_300_3_polish/word2vec_300_3_polish.bin")
 
@@ -34,8 +34,8 @@ def get_most_similar_words(expression):
     print()
 
 
-# for word in words:
-#     get_most_similar_words(word)
+for word in words:
+    get_most_similar_words(word)
 
 # --------- Most similar words for kpk ---------
 # word2vec_100:
@@ -146,7 +146,7 @@ def get_most_similiar_words_for_expression_avg(expressions):
         print()
 
 
-# get_most_similiar_words_for_expression_avg(expressions)
+get_most_similiar_words_for_expression_avg(expressions)
 # --------- Most similar words for sąd najwyższy ---------
 # word2vec_100:
 # [('sąd', 0.8644266128540039),
@@ -266,8 +266,8 @@ def get_result_of_equation(positive, negative):
     print()
 
 
-# for equa in equations:
-#     get_result_of_equation(equa[0], equa[1])
+for equa in equations:
+    get_result_of_equation(equa[0], equa[1])
 # --------- Result for + ['sąd', 'konstytucja'] and - ['kpk'] ---------
 # word2vec_100:
 # [('trybunał', 0.6436409950256348),
@@ -385,8 +385,6 @@ def get_result_of_equation(positive, negative):
 words = np.array(['szkoda', 'strata', 'uszczerbek', 'krzywda', 'niesprawiedliwość', 'nieszczęście', 'kobieta',
                   'mężczyzna', 'pasażer', 'pasażerka', 'student', 'studentka', 'lekarz', 'lekarka'])
 
-wv = word2vec_300
-# wv = word2vec_100
 
 def scatter_points(hue, point_labels, principal_components):
     x = np.transpose(principal_components)[0]
@@ -411,4 +409,7 @@ def plot_with_tsne(wv, words, perplexity=30, learning_rate=100.0, iterations=100
     plt.clf()
 
 
+wv = word2vec_300
+plot_with_tsne(wv, words)
+wv = word2vec_100
 plot_with_tsne(wv, words)
