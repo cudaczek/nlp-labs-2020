@@ -26,6 +26,9 @@ Jeśli chce się unikać zwracania dokładnie tych samych słów, warto być mo�
 
 Bywają dość śmieszne rezultaty jak dla "przedszkolanka + mężczyzna - kobieta", które zwraca między innymi słowo "siedmiolatek",
 który przedszkole już raczej skończył, ale też na pewno nie jest opiekunem dzieci młodszych w przedszkolu. 
+Trudno zresztą się temu dziwić, ponieważ w języku polskim nie ma określenia na "mężczyznę, który wykonuje zawód przedszkolanki",
+oba modele były przygotowywane za zbiorze polskich słów i ciężko oczekiwać, żeby zwracały w odpowiedzi nowe/inne słowa.
+=> odpowiedź brzmi: tak.
 
 - According to t-SNE: do representations of similar word cluster together?
 
