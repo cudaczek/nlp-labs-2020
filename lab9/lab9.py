@@ -44,7 +44,7 @@ def find_largest_files():
     return top_50_bills
 
 
-# top_50_bills = find_largest_files()
+top_50_bills = find_largest_files()
 
 # Use the lemmatized and sentence split documents (from ex. 5) to identify the expressions that consist of
 # consecutive words starting with a capital letter
@@ -97,7 +97,7 @@ def eval_files(bills, lpmn="any2txt|wcrft2", out_path='out/'):
             pbar.update(1)
 
 
-# eval_files(top_50_bills)
+eval_files(top_50_bills)
 
 # Compute the frequency of each identified expression and print 50 results with the largest number of occurrences.
 def find_capitalised_expressions():
@@ -136,7 +136,7 @@ def find_capitalised_expressions():
     return common_expressions
 
 
-# find_capitalised_expressions()
+find_capitalised_expressions()
 # [('Nr', 1266),
 #  ('Art', 497),
 #  ('U', 477),
@@ -253,7 +253,7 @@ def plot_histogram(result):
     plt.show()
 
 
-# plot_histogram(result)
+plot_histogram(result)
 
 # Display 10 most frequent Named Entities for each coarse-grained type.
 
