@@ -57,6 +57,7 @@ user = "mojadresemail2"
 url = "http://ws.clarin-pl.eu/nlprest2/base"
 
 
+# kod na podstawie przykładu http://nlp.pwr.wroc.pl/redmine/projects/nlprest2/wiki/Python
 def upload(file):
     with open(file, "rb") as myfile:
         doc = myfile.read()
@@ -318,16 +319,10 @@ def show_top_10_in_coarse_grained_classes(result):
 #  ('Minister Edukacji Narodowej', 11),
 #  ('Minister Spraw Wewnętrznych', 5),
 #  ('PESEL', 3),
-#  ('Ă - - - - - Ĺ - - - - - - - - - - - - - - - - - - - Ĺ - - - - - - - - - - - '
-#   '- - - - - - - - - - - - -',
-#   2),
+#  ('Ă - - - - - Ĺ - - - - - - - - - - - - - - - - - - - Ĺ - - - - - - - - - - - - - - - - - - - - - - - -', 2),
 #  ('FUS', 2),
-#  ('É - - - - - Â - - - - - - - - - - - - - - - - - - - Â - - - - - - - - - - - '
-#   '- - - - - - - - - - - - -',
-#   1),
-#  ('Č - - - - - Á - - - - - - - - - - - - - - - - - - - Á - - - - - - - - - - - '
-#   '- - - - - - - - - - - - -',
-#   1)]
+#  ('É - - - - - Â - - - - - - - - - - - - - - - - - - - Â - - - - - - - - - - - - - - - - - - - - - - - -', 1),
+#  ('Č - - - - - Á - - - - - - - - - - - - - - - - - - - Á - - - - - - - - - - - - - - - - - - - - - - - -', 1)]
 # ------------- Top 10 for nam_adj -------------
 # [('polski', 22),
 #  ('polskich', 9),
