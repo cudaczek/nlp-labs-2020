@@ -1,16 +1,19 @@
-from collections import Counter
-
+import json
+import locale
+import os
+import pprint
 import requests
-from tqdm import tqdm
+import time
 
+from collections import Counter
+import matplotlib.pyplot as plt
+from tqdm import tqdm
 import xml.etree.ElementTree as et
 
-import json
-import os
-import time
-import pprint
-
 data_path = "../data_lab1/"
+
+# żeby możliwe było sortowanie alfabetyczne w języku polskim
+locale.setlocale(locale.LC_COLLATE, "pl_PL.UTF-8")
 
 
 # Sort bills according to their size and take top 50 (largest) bills.
@@ -41,7 +44,7 @@ def find_largest_files():
     return top_50_bills
 
 
-top_50_bills = find_largest_files()
+# top_50_bills = find_largest_files()
 
 # Use the lemmatized and sentence split documents (from ex. 5) to identify the expressions that consist of
 # consecutive words starting with a capital letter
@@ -131,6 +134,7 @@ def find_capitalised_expressions():
     pprint.pprint(common_expressions)
     return common_expressions
 
+
 # find_capitalised_expressions()
 # [('Nr', 1266),
 #  ('Art', 497),
@@ -185,4 +189,237 @@ def find_capitalised_expressions():
 
 
 # Apply the NER algorithm to identify the named entities in the same set of documents (not lemmatized) using the n82 model.
-eval_files(top_50_bills, lpmn='any2txt|wcrft2|liner2({"model":"n82"})', out_path='out_n82/')
+# eval_files(top_50_bills, lpmn='any2txt|wcrft2|liner2({"model":"n82"})', out_path='out_n82/')
+
+# Plot the frequency (histogram) of the coares-grained classes (e.g. nam_adj, nam_eve, nam_fac`).
+def find_expressions_classes():
+    out_path = 'out_n82/'
+    result = dict()
+    with tqdm(total=50) as pbar:
+        for filename in os.listdir(out_path):
+            if filename.endswith(".ccl"):
+                filepath = os.path.join(out_path, filename)
+                ccl_file = et.parse(filepath).getroot()
+                for chunk in ccl_file:
+                    for sentence in chunk:
+                        sentence_stats = {}
+                        expression = ""
+                        for token in sentence:
+                            if token.tag == 'tok':
+                                for ann in token.findall("ann"):
+                                    if ann.text != "0":
+                                        ann_key = (ann.get("chan"), ann.text)
+                                        word = token.find("orth").text
+                                        values = sentence_stats.get(ann_key, [])
+                                        values.append(word)
+                                        sentence_stats[ann_key] = values
+                        # print(sentence_stats)
+                        for ann, expr in sentence_stats.items():
+                            expression = " ".join(expr)
+                            entity_name = ann[0]
+                            val = result.get((entity_name, expression), 0)
+                            result[(entity_name, expression)] = val + 1
+            # print(result)
+            pbar.update(1)
+    return result
+
+
+result = find_expressions_classes()
+
+
+def plot_histogram(result):
+    coares_grained_classes = dict()
+
+    for key, val in result.items():
+        coares_grained_class = "_".join(key[0].split("_")[:2])
+        recent_val = coares_grained_classes.get(coares_grained_class, 0)
+        coares_grained_classes[coares_grained_class] = recent_val + val
+
+    print(coares_grained_classes)
+    # {'nam_pro': 911,
+    # 'nam_org': 2868,
+    # 'nam_loc': 346,
+    # 'nam_oth': 138,
+    # 'nam_adj': 60,
+    # 'nam_liv': 163,
+    # 'nam_eve': 8,
+    # 'nam_fac': 32}
+
+    plt.figure(figsize=(10, 6))
+    plt.title("Coarse-grained classes histogram")
+    plt.bar(x=list(coares_grained_classes.keys()), height=list(coares_grained_classes.values()))
+    plt.savefig("histogram.png")
+    plt.show()
+
+
+# plot_histogram(result)
+
+# Display 10 most frequent Named Entities for each coarse-grained type.
+
+print(result)
+
+
+def show_top_10_in_coarse_grained_classes(result):
+    coarse_grained_classes = dict()
+
+    for key, val in result.items():
+        coarse_grained_class = "_".join(key[0].split("_")[:2])
+        recent_val = coarse_grained_classes.get(coarse_grained_class, dict())
+        recent_val.update({
+            key[1]: val
+        })
+        coarse_grained_classes[coarse_grained_class] = recent_val
+    # print(coarse_grained_classes)
+
+    for key, val in coarse_grained_classes.items():
+        print(f"------------- Top 10 for {key} -------------")
+        sorted_elements = sorted(val.items(), key=lambda kv: kv[1], reverse=True)
+        pprint.pprint(sorted_elements[:10])
+
+
+# show_top_10_in_coarse_grained_classes(result)
+# ------------- Top 10 for nam_pro -------------
+# [('Dz . U .', 477),
+#  ('Kodeksu postępowania administracyjnego', 19),
+#  ('Kodeksu rodzinnego', 17),
+#  ('Monitor Polski', 16),
+#  ('Kodeksu karnego', 16),
+#  ('Kodeksu postępowania karnego', 15),
+#  ('Ordynacja podatkowa', 12),
+#  ('Kodeksu karnego wykonawczego', 11),
+#  ('Kodeksu postępowania cywilnego', 10),
+#  ('Kodeksu cywilnego', 7)]
+# ------------- Top 10 for nam_org -------------
+# [('Skarbu Państwa', 134),
+#  ('Urząd Patentowy', 104),
+#  ('Rada Ministrów', 93),
+#  ('Minister Spraw Wewnętrznych', 83),
+#  ('Prezes Rady Ministrów', 61),
+#  ('Funduszu Pracy', 54),
+#  ('Skarb Państwa', 44),
+#  ('Urzędu Patentowego', 41),
+#  ('Urzędzie Patentowym', 36),
+#  ('Minister Finansów', 35)]
+# ------------- Top 10 for nam_loc -------------
+# [('Rzeczypospolitej Polskiej', 143),
+#  ('Polsce', 36),
+#  ('Warszawie', 12),
+#  ('Warszawy', 11),
+#  ('Warszawa', 11),
+#  ('Polski', 8),
+#  ('Straż Graniczną', 7),
+#  ('Rzeczpospolita Polska', 6),
+#  ('Poznaniu', 6),
+#  ('Wrocławiu', 6)]
+# ------------- Top 10 for nam_oth -------------
+# [('złotych', 63),
+#  ('zł', 31),
+#  ('ECU', 13),
+#  ('Minister Edukacji Narodowej', 11),
+#  ('Minister Spraw Wewnętrznych', 5),
+#  ('PESEL', 3),
+#  ('Ă - - - - - Ĺ - - - - - - - - - - - - - - - - - - - Ĺ - - - - - - - - - - - '
+#   '- - - - - - - - - - - - -',
+#   2),
+#  ('FUS', 2),
+#  ('É - - - - - Â - - - - - - - - - - - - - - - - - - - Â - - - - - - - - - - - '
+#   '- - - - - - - - - - - - -',
+#   1),
+#  ('Č - - - - - Á - - - - - - - - - - - - - - - - - - - Á - - - - - - - - - - - '
+#   '- - - - - - - - - - - - -',
+#   1)]
+# ------------- Top 10 for nam_adj -------------
+# [('polski', 22),
+#  ('polskich', 9),
+#  ('polskiej', 4),
+#  ('polskim', 4),
+#  ('polskiego', 3),
+#  ('Polskiej', 2),
+#  ('polską', 2),
+#  ('polscy', 2),
+#  ('polskimi', 2),
+#  ('Wojewódzki', 2)]
+# ------------- Top 10 for nam_liv -------------
+# [('Gospodarki Morskiej', 39),
+#  ('Straży Granicznej', 11),
+#  ('Głównego Inspektora', 10),
+#  ('Art', 8),
+#  ('Głównym Inspektorem', 5),
+#  ('Kartograficznym', 4),
+#  ('III', 4),
+#  ('Główny Lekarz Weterynarii', 4),
+#  ('Karta Nauczyciela', 3),
+#  ('Najwyższego', 3)]
+# ------------- Top 10 for nam_eve -------------
+# [('BGŻ SA', 2),
+#  ('Monitorze Sądowym', 2),
+#  ('Narodowego Spisu Powszechnego', 1),
+#  ('Świętem Straży Granicznej', 1),
+#  ('Generalny Konserwator Zabytków', 1),
+#  ('Ochrony Roślin', 1)]
+# ------------- Top 10 for nam_fac -------------
+# [('Komendant Główny', 16),
+#  ('Straży Granicznej', 5),
+#  ('NIP', 2),
+#  ('Centralnym Muzeum Pożarnictwa', 2),
+#  ('Kościoła Ewangelicko - Reformowanego', 1),
+#  ('Obrony Narodowej', 1),
+#  ('REGON', 1),
+#  ('Zakładu', 1),
+#  ('Muzeum Pożarnictwa', 1),
+#  ('Kościoła Ewangelicko - Metodystycznego', 1)]
+
+# Display 50 most frequent Named Entities including their count and fine-grained type.
+
+sorted_results = sorted(result.items(), key=lambda kv: -kv[1])
+pprint.pprint(sorted_results[:50])
+# [(('nam_pro_media_periodic', 'Dz . U .'), 477),
+#  (('nam_loc_gpe_country', 'Rzeczypospolitej Polskiej'), 143),
+#  (('nam_org_institution', 'Skarbu Państwa'), 134),
+#  (('nam_org_institution', 'Urząd Patentowy'), 104),
+#  (('nam_org_organization', 'Państwowej Straży Pożarnej'), 96),
+#  (('nam_org_institution', 'Rada Ministrów'), 93),
+#  (('nam_org_institution', 'Minister Spraw Wewnętrznych'), 83),
+#  (('nam_oth_currency', 'złotych'), 63),
+#  (('nam_org_institution', 'Prezes Rady Ministrów'), 61),
+#  (('nam_org_institution', 'Funduszu Pracy'), 54),
+#  (('nam_org_institution', 'Skarb Państwa'), 44),
+#  (('nam_org_institution', 'Urzędu Patentowego'), 41),
+#  (('nam_liv_person', 'Gospodarki Morskiej'), 39),
+#  (('nam_org_institution', 'Urzędzie Patentowym'), 36),
+#  (('nam_loc_gpe_country', 'Polsce'), 36),
+#  (('nam_org_institution', 'Minister Finansów'), 35),
+#  (('nam_org_institution', 'Zakładu Ubezpieczeń Społecznych'), 35),
+#  (('nam_org_institution', 'Minister Pracy i Polityki Socjalnej'), 33),
+#  (('nam_org_institution', 'Fundusz Pracy'), 33),
+#  (('nam_oth_currency', 'zł'), 31),
+#  (('nam_org_institution', 'Zakład Ubezpieczeń Społecznych'), 30),
+#  (('nam_org_institution', 'Ministrem Finansów'), 29),
+#  (('nam_org_institution', 'Minister Zdrowia i Opieki Społecznej'), 27),
+#  (('nam_org_institution', 'Ministrem Pracy i Polityki Socjalnej'), 25),
+#  (('nam_org_institution', 'Prezesa Rady Ministrów'), 24),
+#  (('nam_org_institution', 'Prezesa Narodowego Banku Polskiego'), 23),
+#  (('nam_org_institution', 'Ministra Spraw Wewnętrznych'), 23),
+#  (('nam_adj_country', 'polski'), 22),
+#  (('nam_org_institution', 'Urzędu Ochrony Państwa'), 22),
+#  (('nam_org_institution', 'Prezes Urzędu'), 21),
+#  (('nam_org_institution', 'Agencji'), 21),
+#  (('nam_org_institution', 'Prezes Urzędu Patentowego'), 19),
+#  (('nam_org_institution', 'Prezesa Urzędu Patentowego'), 19),
+#  (('nam_pro_title_document', 'Kodeksu postępowania administracyjnego'), 19),
+#  (('nam_org_institution', 'Minister Transportu i Gospodarki Morskiej'), 19),
+#  (('nam_org_institution', 'Zakładu'), 19),
+#  (('nam_org_institution', 'Prezes Głównego Urzędu Statystycznego'), 18),
+#  (('nam_org_institution', 'Banku Gospodarki Żywnościowej'), 18),
+#  (('nam_org_institution', 'Główny Urząd Statystyczny'), 18),
+#  (('nam_org_institution', 'Straży Granicznej'), 17),
+#  (('nam_pro_title_document', 'Kodeksu rodzinnego'), 17),
+#  (('nam_org_institution', 'Komendanta Głównego Policji'), 17),
+#  (('nam_pro_title', 'Monitor Polski'), 16),
+#  (('nam_org_company', 'BGŻ SA'), 16),
+#  (('nam_pro_title_document', 'Kodeksu karnego'), 16),
+#  (('nam_fac_goe', 'Komendant Główny'), 16),
+#  (('nam_org_institution', 'Ministra Finansów'), 15),
+#  (('nam_org_institution', 'Prezesa Głównego Urzędu Statystycznego'), 15),
+#  (('nam_org_institution', 'Państwowej Straży Pożarnej'), 15),
+#  (('nam_pro_title_document', 'Kodeksu postępowania karnego'), 15)]
