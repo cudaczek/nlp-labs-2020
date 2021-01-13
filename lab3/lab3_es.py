@@ -6,7 +6,8 @@ from elasticsearch import Elasticsearch
 
 
 ## Load Morfologik to ElasticSearch (one document for each form)
-# and use fuzzy matching to obtain the possible corrections of the 30 words with 5 occurrences that do not belong to the dictionary.
+# and use fuzzy matching to obtain the possible corrections of the 30 words with 5 occurrences
+# that do not belong to the dictionary.
 
 es_url = 'http://localhost:9200'  # default path to working es sevice
 index_name = 'my_index_lab3'
